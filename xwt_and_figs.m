@@ -135,8 +135,10 @@ if xwt_flag == 1
     COI=logical(COI);
 
     mean_wxy = nansum(nansum(abs(Wxy/(nanstd(d1(:,2))*nanstd(d2(:,2)))).*COI))/sum(COI(:));
-    sig_perc_wxy = nansum(nansum((sig95_power.*COI)>1))./sum(sum(COI));
-    [~,anglestrength,~]=anglemean(angle(Wxy.*COI.*~isnan(Wxy)));
+    sig_perc_wxy = nansum(nansum((sig95_power.*COI)>1))./nansum(nansum(COI));
+    temp = Wxy.*COI;
+    temp(isnan(Wxy)) = 0;
+    [~,anglestrength,~]=anglemean(angle(temp));
     WxyConed = Wxy.*COI;
     
     if plotting==1
@@ -205,6 +207,11 @@ if wtc_flag == 1
         Rsq(:,n) = nan;
         sig95_coherence(:,n) = nan;
     end
+    % Figure out why it's doing this!
+    Rsq(Rsq<0) = nan;
+    sig95_coherence(sig95_coherence<0) = nan;
+    sig95_coherence(Rsq>1) = nan;
+    Rsq(Rsq>1) = nan;
     
     COI=sig95_coherence*0;
     for t=1:size(sig95_coherence,2)

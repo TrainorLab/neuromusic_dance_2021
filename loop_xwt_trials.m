@@ -29,7 +29,8 @@ for v = 1:numel(vars)
                     X = squeeze(DATA{trial}.A(:,d,:));
             end
             N = any(squeeze(DATA{trial}.N(:,d,:)),2);
-            labels = {DATA{trial}.marker_labels{1,d} DATA{trial}.marker_labels{2,d}};
+            labels = ['Trial ' num2str(trial) ', markers ' DATA{trial}.marker_labels{1,d} ' and ' DATA{trial}.marker_labels{2,d} '. ' vars{v}];
+            fprintf('%s\n',labels)
             if save_figs_flag == 1
                 save_fig1_fname = ['indiv-wavelet-power_trial' num2str(trial) '_' DATA{trial}.marker_labels{1,d} '-' DATA{trial}.marker_labels{2,d} '-' vars{v}];
                 save_fig2_fname = ['cross-wavelet-power_trial' num2str(trial) '_' DATA{trial}.marker_labels{1,d} '-' DATA{trial}.marker_labels{2,d} '-' vars{v}];
@@ -40,9 +41,11 @@ for v = 1:numel(vars)
                 save_fig3_fname = [];
             end
             
-            REZ{trial,d,v} = xwt_and_figs([t X(:,1)],[t X(:,2)],N,1,1,plotting_flag,labels,save_fig1_fname,save_fig2_fname,save_fig3_fname);
+            REZ{trial,d,v} = xwt_and_figs([t X(:,1)],[t X(:,2)],N,1,1,plotting_flag,{DATA{trial}.marker_labels{1,d} DATA{trial}.marker_labels{2,d}},save_fig1_fname,save_fig2_fname,save_fig3_fname);
+            if abs(REZ{trial,d,v}.mean_rsq)>1e4;keyboard;end
+            if isnan(REZ{trial,d,v}.mean_rsq);keyboard;end
             REZ{trial,d,v}.T = t;
-            REZ{trial,d,v}.labels = ['Trial ' num2str(trial) ', markers ' DATA{trial}.marker_labels{1,d} ' and ' DATA{trial}.marker_labels{2,d} '. ' vars{v}];
+            REZ{trial,d,v}.labels = labels;
             if plotting_flag == 1 && save_figs_flag == 0
                 pause
             end
@@ -60,9 +63,9 @@ for v = 1:size(REZ,3)
     for d = 1:size(REZ,2)
         for trial = 1:size(REZ,1)
             fprintf('%40s\t',REZ{trial,d,v}.labels)
-            fprintf('%18.2f',REZ{trial,d,v}.mean_wxy,REZ{trial,d,v}.sig_perc_wxy,REZ{trial,d,v}.mean_rsq,REZ{trial,d,v}.sig_perc_wtc)
+            fprintf('%18.3f',REZ{trial,d,v}.mean_wxy,REZ{trial,d,v}.sig_perc_wxy,REZ{trial,d,v}.mean_rsq,REZ{trial,d,v}.sig_perc_wtc)
             fprintf('\n')
-            S = vertcat(S,[v d trial REZ{trial,d,v}.mean_wxy,REZ{trial,d,v}.sig_perc_wxy,REZ{trial,d,v}.mean_rsq,REZ{trial,d,v}.sig_perc_wtc]);
+            S = vertcat(S,[v d trial REZ{trial,d,v}.mean_wxy,REZ{trial,d,v}.sig_perc_wxy,REZ{trial,d,v}.mean_rsq,REZ{trial,d,v}.sig_perc_wtc,REZ{trial,d,v}.anglestrength]);
         end
     end
 end

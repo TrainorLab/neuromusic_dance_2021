@@ -3,7 +3,7 @@ clear
 %% Where's my data?
 data_folder = input('Where is my data? '); % i.e. '/home/dobri/mcmc/neuromusic_dance'
 library_folder = input('Where are my scripts? ');
-addpath library_folder
+addpath(library_folder)
 addpath(fullfile(library_folder,'wavelet-coherence'))
 
 plotting_flag = input('To visualize data along the way? Type 1 or just Enter for yes: ');
@@ -25,6 +25,8 @@ bodies_labels = {'a','s'};
 wanted_segments{1} = {'h1','h2','h3'};
 wanted_segments{2} = {'kri'};
 wanted_segments{3} = {'kre'};
+wanted_segments{4} = {'fre'};
+wanted_segments{5} = {'fri'};
 
 
 %% Select markers to process. Then show NaNs, fill, smooth, and dot-dot.
@@ -47,7 +49,7 @@ for trial = 1:numel(RAWDATA)
             end
             X = RAWDATA{trial}.X(:,:,marker_index);
             N = X*0;
-
+            
             % Inspect how much nans there are, before and after gap-filling
             for d = 1:size(X,3)
                 for dd = 1:size(X,2)
@@ -63,7 +65,7 @@ for trial = 1:numel(RAWDATA)
             end
             % We don't need all head markers. Average across them.
             X = nanmean(X,3);
-
+            
             if numel(wanted_segments{s})>1
                 marker_label = [bodies_labels{b} wanted_segments{s}{ss}(1:end-1)];
             end

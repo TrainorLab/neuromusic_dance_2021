@@ -12,8 +12,12 @@ tri = nanstop - nanstart' + 1;
 tri(tri<0) = nan;
 nanwinlen = min(tri);
 
+if nanstop(1)<nanstart(1);x(1:nanstop(1)) = x(nanstop(1)+1);end
+if numel(nanstop)>0 && nanstop(end)<nanstart(end);x(nanstart(end):end) = 0;end
+if isempty(nanstop) && numel(nanstart)==1;x(nanstart(end):end) = 0;end
+
 if ~isempty(nanstop)
-    for k=1:numel(nanstart)
+    for k=1:numel(nanwinlen)
         if nanwinlen(k)<(sr*win)  % skip nan windows > a second
             x(nanstart(k):(nanstart(k)+nanwinlen(k)-1)) = ...
                 linspace(x(nanstart(k)-1),x(nanstart(k)+nanwinlen(k)),nanwinlen(k));
