@@ -56,14 +56,14 @@ end
 % save(['xwt_results_from_cleaned_speed_and_acc_' datestr(now,'yyyy-mm-dd') '.mat'],'REZ')
 
 fprintf('%40s\t','_')
-fprintf('%18s','Mean xw power','% sig power','Mean xw coherence','% sig coh')
+fprintf('%18s,','Mean xw power','% sig power','Mean xw coherence','% sig coh')
 fprintf('\n')
 S = [];
 for v = 1:size(REZ,3)
     for d = 1:size(REZ,2)
         for trial = 1:size(REZ,1)
             fprintf('%40s\t',REZ{trial,d,v}.labels)
-            fprintf('%18.3f',REZ{trial,d,v}.mean_wxy,REZ{trial,d,v}.sig_perc_wxy,REZ{trial,d,v}.mean_rsq,REZ{trial,d,v}.sig_perc_wtc)
+            fprintf('%18.3f,',REZ{trial,d,v}.mean_wxy,REZ{trial,d,v}.sig_perc_wxy,REZ{trial,d,v}.mean_rsq,REZ{trial,d,v}.sig_perc_wtc)
             fprintf('\n')
             S = vertcat(S,[v d trial REZ{trial,d,v}.mean_wxy,REZ{trial,d,v}.sig_perc_wxy,REZ{trial,d,v}.mean_rsq,REZ{trial,d,v}.sig_perc_wtc,REZ{trial,d,v}.anglestrength]);
         end

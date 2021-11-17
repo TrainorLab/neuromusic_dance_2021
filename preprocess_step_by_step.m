@@ -32,6 +32,7 @@ wanted_segments{5} = {'fri'};
 %% Select markers to process. Then show NaNs, fill, smooth, and dot-dot.
 % Then speed and acceleration.
 clear DATA
+Full = [];
 for trial = 1:numel(RAWDATA)
     t = RAWDATA{trial}.T(:,2);
     for b = 1:numel(bodies_labels)
@@ -59,6 +60,7 @@ for trial = 1:numel(RAWDATA)
                     X(:,dd,d) = fill_nans_by_lin_interp(X(:,dd,d),sr,1,plotting_flag);
                     N(:,dd,d) = isnan(X(:,dd,d));
                     X(:,dd,d) = fill_nans_by_lin_interp(X(:,dd,d),sr,inf,plotting_flag);
+                    % extra fill.
                     if isnan(X(1,dd,d));X(1:(find(~isnan(X(:,dd,d)),1,'first')-1),dd,d) = X(find(~isnan(X(:,dd,d)),1,'first'),dd,d);end
                     if isnan(X(end,dd,d));X((find(~isnan(X(:,dd,d)),1,'last')+1):end,dd,d) = X(find(~isnan(X(:,dd,d)),1,'last'),dd,d);end
                 end
@@ -79,7 +81,10 @@ for trial = 1:numel(RAWDATA)
             DATA{trial}.Anan(:,s,b) = DATA{trial}.A(:,s,b);
             DATA{trial}.Anan(logical(N(:,dd,d)),s,b) = nan;
             DATA{trial}.N(:,s,b) = N(:,dd,d);
+            DATA{trial}.full(:,s,b) = sum(~N(:,dd,d))/size(N,1);
             DATA{trial}.T = t;
+            fprintf('Percent of trial available: %5.2f.\n',DATA{trial}.full(:,s,b))
+            Full = vertcat(Full,[trial b s DATA{trial}.full(:,s,b)]);
         end
     end
 end
